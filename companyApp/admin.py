@@ -1,7 +1,7 @@
 from django.contrib import admin
 # from django.http import HttpRequest
 from .models import (
-    GeneralInfo, Service, Testimonial, FrequentlyAskedQuestion
+    GeneralInfo, Service, Testimonial, FrequentlyAskedQuestion, ContactFormLog
 )
 
 # courseadmin
@@ -61,3 +61,14 @@ class FrequentlyAskedAdmin(admin.ModelAdmin):
     list_display = [
         'question', 'answer'
     ]
+
+
+# OR, its preferred
+@admin.register(ContactFormLog)
+class ContactFormLogAdmin(admin.ModelAdmin):
+    list_display = ['email', 'is_success', 'is_error', 'sent_time']
+
+        # To disable delete permission 
+    def has_delete_permission(self, request, obj=None):
+        return False
+

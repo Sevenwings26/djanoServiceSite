@@ -1,9 +1,18 @@
 from django.shortcuts import render, redirect
 from . import models
-from companyApp.models import GeneralInfo, Service, Testimonial, FrequentlyAskedQuestion
+from companyApp.models import (
+    GeneralInfo, 
+    Service, 
+    Testimonial, 
+    FrequentlyAskedQuestion,
+    ContactFormLog
+)
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.contrib import messages
+from django.utils import timezone
+
 
 # # to store queries executed by django ... 
 # from django.db import connection
@@ -73,16 +82,43 @@ def contact_form(request):
             "message":message,
         }
         html_context = render_to_string('email.html', context)
-        
+
+
+        is_success = False        
+        is_error = False
+        error_message = ""        
         # send mail .... 
-        send_mail(
+        try:
+            send_mail(
+                subject=subject,
+                # message=f"{name} - {email} - {message}",
+                message=None,
+                html_message=html_context,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=False, # True is default
+            )
+        except Exception as e:
+            is_error = True
+            error_message = str(e)
+            print(f'Email failed')
+            messages.error(request, "There is an error, could not send email!")
+        else:
+            is_success = True
+            print(f"Email has been sent out...")
+            messages.success(request, "Email has been sent successfully!")
+
+        # Contact form log 
+        ContactFormLog.objects.create(
+            name=name,
+            email=email,
             subject=subject,
-            # message=f"{name} - {email} - {message}",
-            message=None,
-            html_message=html_context,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[settings.EMAIL_HOST_USER],
-            fail_silently=False, # True is default
+            message=message,
+            sent_time=timezone.now(),
+            is_success=is_success,
+            is_error=is_error,
+            error_message=error_message,
         )
 
     return redirect('home')
+

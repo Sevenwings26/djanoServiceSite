@@ -1,7 +1,7 @@
 from django.db import models
 
 
-# Create your models here.
+# GeneralInformation model 
 class GeneralInfo(models.Model):
     company_name = models.CharField(max_length=222, default="Company Name")
     location = models.CharField(max_length=300)
@@ -19,6 +19,7 @@ class GeneralInfo(models.Model):
         return self.company_name
 
 
+# Services render
 class Service(models.Model):
     icon = models.CharField(max_length=50, blank=True, null=True)
     title = models.CharField(max_length=355, unique=True)
@@ -28,6 +29,7 @@ class Service(models.Model):
         return self.title
 
 
+# Testimonials 
 class Testimonial(models.Model):
     user_image = models.CharField(max_length=225, blank=True, null=True)
     star_count = [
@@ -47,10 +49,26 @@ class Testimonial(models.Model):
         return f"{self.username} - job-tile {self.user_job_title}"
     
 
+# FAQS 
 class FrequentlyAskedQuestion(models.Model):
     question = models.CharField(max_length=300)
     answer = models.TextField(default='add')
 
     def __str__(self):
         return self.question
+    
+
+# Contact Logs - number of times a particular user sent mail 
+class ContactFormLog(models.Model):
+    name = models.CharField(max_length=150)
+    email = models.CharField(max_length=150)
+    subject = models.CharField(max_length=150)
+    message = models.TextField()
+    sent_time = models.DateTimeField(null=True, blank=True)
+    is_success = models.BooleanField(default=False)
+    is_error = models.BooleanField(default=False)
+    error_message = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"
     
