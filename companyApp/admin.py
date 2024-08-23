@@ -1,6 +1,8 @@
 from django.contrib import admin
 # from django.http import HttpRequest
-from .models import GeneralInfo, Service, Testimonial
+from .models import (
+    GeneralInfo, Service, Testimonial, FrequentlyAskedQuestion
+)
 
 # courseadmin
 # admin4321
@@ -17,27 +19,26 @@ class GeneralInfoAdmin(admin.ModelAdmin):
     list_display = ['company_name', 'location', 'email']
    
     # other functions/operations that can be performed on the model on the admin site...
-
-    # # To disable add permission 
-    # def has_add_permission(self, request, obj=None):
-    #     return False
+    # To disable add permission 
+    def has_add_permission(self, request, obj=None):
+        return False
     
     # To disable update permission 
-    # def has_change_permission(self, request, obj=None):
-    #     return False
+    def has_change_permission(self, request, obj=None):
+        return False
     
-    # # set specific field to diable update 
-    # readonly_fields = [
-    #     'email'
-    # ]
+    # set specific field to diable update 
+    readonly_fields = [
+        'email'
+    ]
     
-    # # To disable delete permission 
-    # def has_delete_permission(self, request, obj=None):
-    #     return False
+    # To disable delete permission 
+    def has_delete_permission(self, request, obj=None):
+        return False
     
-    # # To disable module from displaying 
-    # def has_module_permission(self, request, obj=None):
-    #     return False
+    # To disable module from displaying 
+    def has_module_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Service)
@@ -53,3 +54,10 @@ class TestimonialAdmin(admin.ModelAdmin):
     def display_rating_count(self, obj):
         return "*" * obj.rating_count
     display_rating_count.short_description = "Rating"
+
+
+@admin.register(FrequentlyAskedQuestion)
+class FrequentlyAskedAdmin(admin.ModelAdmin):
+    list_display = [
+        'question', 'answer'
+    ]

@@ -47,3 +47,10 @@ class Testimonial(models.Model):
         return f"{self.username} - job-tile {self.user_job_title}"
     
 
+class FrequentlyAskedQuestion(models.Model):
+    question = models.CharField(max_length=300)
+    answer = models.TextField(default='add')
+
+    def __str__(self):
+        return self.question
+    
