@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.utils import timezone
+from ckeditor.fields import RichTextField
 
 # GeneralInformation model 
 class GeneralInfo(models.Model):
@@ -71,4 +72,31 @@ class ContactFormLog(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.email}"
+    
+
+class Author(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=50)
+    joined_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.first_name
+
+
+class Blog(models.Model):
+    blog_image = models.CharField(max_length=225, null=True, blank=True)
+    category = models.CharField(max_length=50, null=True, blank=True)
+    title = models.CharField(max_length=100)
+    # author = models.CharField(max_length=100, default="name")
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, blank=True, null=True)
+    # on_delete=models.CASCADE - if deleting the author, django will auto delete the author's blog posts on delete of author
+    # on_delete=models.PROTECT - if deleting the author, django will not delete the author if the author has blogs.
+    # on_delete=models.SET_NULL - if deleting the author, django will make the author column as blank.
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    content = RichTextField() #models.TextField()
+
+    def __str__(self):
+        return self.title
     

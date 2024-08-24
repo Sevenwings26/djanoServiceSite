@@ -1,7 +1,7 @@
 from django.contrib import admin
 # from django.http import HttpRequest
 from .models import (
-    GeneralInfo, Service, Testimonial, FrequentlyAskedQuestion, ContactFormLog
+    GeneralInfo, Service, Testimonial, FrequentlyAskedQuestion, ContactFormLog, Blog, Author
 )
 
 # courseadmin
@@ -71,4 +71,13 @@ class ContactFormLogAdmin(admin.ModelAdmin):
         # To disable delete permission 
     def has_delete_permission(self, request, obj=None):
         return False
+
+@admin.register(Blog)
+class BlogAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'created_at']
+
+@admin.register(Author)
+class BlogAdmin(admin.ModelAdmin):
+    # list_display = ['title', 'category', 'created_at']
+    pass
 

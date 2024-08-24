@@ -5,14 +5,15 @@ from companyApp.models import (
     Service, 
     Testimonial, 
     FrequentlyAskedQuestion,
-    ContactFormLog
+    ContactFormLog,
+    Blog
 )
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.utils import timezone
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # # to store queries executed by django ... 
 # from django.db import connection
@@ -37,6 +38,8 @@ def index(request):
     testimonials = Testimonial.objects.all()
     faqs = FrequentlyAskedQuestion.objects.all()
 
+    recent_blogs = Blog.objects.all().order_by('-created_at')[:3]
+
     context = {
         "company_name": general_info.company_name,
         "location":general_info.location,
@@ -52,6 +55,7 @@ def index(request):
         "services":services,
         "testimonials":testimonials,
         "faqs":faqs,
+        "recent_blogs":recent_blogs,
     }
 
     return render(request, "index.html", context)
@@ -121,4 +125,42 @@ def contact_form(request):
         )
 
     return redirect('home')
+
+
+
+def blog_details(request, blog_id):
+    blog = Blog.objects.get(id=blog_id)
+
+    recent_blogs = Blog.objects.all().exclude(id=blog_id).order_by('-created_at')[:2]
+
+    context = {
+        "blog":blog,
+        "recent_blogs":recent_blogs,
+    }
+    return render(request, 'blog_details.html', context)
+
+
+def blogs(request):
+
+    all_blogs = Blog.objects.all()
+    paginator = Paginator(all_blogs, 3)
+
+    print(f"Paginator page: {paginator.num_pages}")
+
+    # for page to work 
+    page = request.GET.get('page')
+
+    # error handling 
+    try:
+        pag_blogs = paginator.page(page)
+    except PageNotAnInteger:
+        pag_blogs = paginator.page(1)
+    except EmptyPage:
+        pag_blogs = paginator.page(paginator.num_pages)
+
+    context = {
+        "pag_blogs":pag_blogs,
+    }
+
+    return render(request, 'blogs.html', context)
 
