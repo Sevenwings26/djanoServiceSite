@@ -41,16 +41,17 @@ def index(request):
     recent_blogs = Blog.objects.all().order_by('-created_at')[:3]
 
     context = {
-        "company_name": general_info.company_name,
-        "location":general_info.location,
-        "email":general_info.email,
-        "phone":general_info.phone,
-        "open_hours":general_info.open_hours,
-        "video_url":general_info.video_url,
-        "twitter":general_info.twitter_url,
-        "facebook":general_info.facebook_url,
-        "instagram":general_info.instagram_url,
-        "linkedin":general_info.linkedin_url,
+        # "company_name": general_info.company_name,
+        "company_name": getattr(general_info, "company_name", ""),
+        "location": getattr(general_info, "location", ""),
+        "email": getattr(general_info, "email" , ""),
+        "phone": getattr(general_info, "phone", ""),
+        "open_hours": getattr(general_info, "open_hours", ""),
+        "video_url": getattr(general_info, "video_url", ""),
+        "twitter":getattr(general_info, "twitter_url", ""),
+        "facebook": getattr(general_info, "facebook_url", ""),
+        "instagram": getattr(general_info, "instagram_url", ""),
+        "linkedin": getattr(general_info, "linkedin_url", ""),
 
         "services":services,
         "testimonials":testimonials,
@@ -85,9 +86,9 @@ def contact_form(request):
             "subject":subject,
             "message":message,
         }
+
         html_context = render_to_string('email.html', context)
-
-
+        
         is_success = False        
         is_error = False
         error_message = ""        
